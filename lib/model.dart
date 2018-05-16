@@ -1,9 +1,13 @@
 // should match model.kt in the server
 
-class DisplayableEntity {
+abstract class DisplayableEntity {
   final String name = "null";
 
   String getMeta() => "null";
+}
+
+abstract class SongList {
+  final List<int> songIds = [];
 }
 
 class Song implements DisplayableEntity {
@@ -45,7 +49,7 @@ class Artist {
   }
 }
 
-class Album implements DisplayableEntity {
+class Album implements DisplayableEntity, SongList {
   final int id;
   final String name;
   final List<int> artistIds;
@@ -86,7 +90,7 @@ class User {
   }
 }
 
-class Playlist implements DisplayableEntity {
+class Playlist implements DisplayableEntity, SongList {
   final int id;
   final String name;
   final int userId;

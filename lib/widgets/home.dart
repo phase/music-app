@@ -20,7 +20,7 @@ class HomePage extends StatelessWidget {
             style: const TextStyle(fontSize: 30.0),
           ),
         ),
-        new EntityListWidget([
+        new EntityRowWidget(client, [
           Song(1, "Alpha", [1, 2]),
           Song(2, "Beta", [1]),
           Song(3, "Gamma", [2]),
@@ -35,7 +35,7 @@ class HomePage extends StatelessWidget {
             style: const TextStyle(fontSize: 30.0),
           ),
         ),
-        new EntityListWidget([
+        new EntityRowWidget(client, [
           Song(7, "Eta", [1, 2]),
           Song(8, "Theta", [1]),
           Song(9, "Iota", [2]),

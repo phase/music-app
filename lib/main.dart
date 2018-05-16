@@ -18,37 +18,42 @@ class MusicApp extends StatelessWidget {
         brightness: Brightness.dark,
         primarySwatch: Colors.orange,
       ),
-      home: new DefaultTabController(
-        length: 3,
-        child: new Scaffold(
-          appBar: new AppBar(
-            title: const Text("Music"),
-            bottom: new TabBar(
-              tabs: [
-                new Tab(text: "Home"),
-                new Tab(text: "Playlists"),
-                new Tab(text: "Account"),
-              ],
+      home: new Stack(
+        children: <Widget>[
+          new DefaultTabController(
+            length: 3,
+            child: new Scaffold(
+              appBar: new AppBar(
+                title: const Text("Music"),
+                bottom: new TabBar(
+                  tabs: [
+                    new Tab(text: "Home"),
+                    new Tab(text: "Playlists"),
+                    new Tab(text: "Account"),
+                  ],
+                ),
+              ),
+              body: new TabBarView(
+                children: <Widget>[
+                  new HomePage(client),
+                  new Column(
+                    children: <Widget>[
+                      new Icon(Icons.library_music),
+                      new Text("404")
+                    ],
+                  ),
+                  new Column(
+                    children: <Widget>[
+                      new Icon(Icons.account_box),
+                      new Text("404")
+                    ],
+                  ),
+                ],
+              ),
             ),
           ),
-          body: new TabBarView(
-            children: <Widget>[
-              new HomePage(client),
-              new Column(
-                children: <Widget>[
-                  new Icon(Icons.library_music),
-                  new Text("404")
-                ],
-              ),
-              new Column(
-                children: <Widget>[
-                  new Icon(Icons.account_box),
-                  new Text("404")
-                ],
-              ),
-            ],
-          ),
-        ),
+//          new SongDock(),
+        ],
       ),
     );
   }
