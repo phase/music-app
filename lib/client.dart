@@ -15,9 +15,8 @@ class Client {
   String apiUrl;
   String downloadUrl;
 
-  LoginCallback loginCallback;
 
-  Client(this.url, {this.loginCallback}) {
+  Client(this.url) {
     this.apiUrl = url + "/api/v1/";
     this.downloadUrl = url + "/download/";
   }
