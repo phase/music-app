@@ -16,7 +16,7 @@ class EntityRowWidget extends StatelessWidget {
         padding: new EdgeInsets.all(4.0),
         child: new Column(
           children: <Widget>[
-            new FutureBuilder<Image>(
+            new FutureBuilder<FadeInImage>(
               future: () {
                 if (entity is Song)
                   return client.getSongArtwork(entity.id, 150.0);
@@ -26,7 +26,7 @@ class EntityRowWidget extends StatelessWidget {
                   return client.getPlaylistArtwork(entity.id, 150.0);
                 return null;
               }(),
-              builder: (BuildContext context, AsyncSnapshot<Image> snapshot) {
+              builder: (BuildContext context, AsyncSnapshot<FadeInImage> snapshot) {
                 if (snapshot.hasData) {
                   var image = snapshot.data;
                   return image;

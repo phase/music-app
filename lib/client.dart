@@ -164,21 +164,38 @@ class Client {
     0xAE
   ]);
 
-  Future<Image> getSongArtwork(int id, double size) async {
-    var c = new Completer<Image>();
-    c.complete(new Image.memory(transparentImage, width: size, height: size));
+  // These probably don't need to be Futures
+
+  Future<FadeInImage> getSongArtwork(int id, double size) async {
+    final c = new Completer<FadeInImage>();
+    c.complete(new FadeInImage.memoryNetwork(
+      placeholder: transparentImage,
+      image: downloadUrl + "artwork/song/$id",
+      width: size,
+      height: size,
+    ));
     return c.future;
   }
 
-  Future<Image> getAlbumArtwork(int id, double size) async {
-    var c = new Completer<Image>();
-    c.complete(new Image.memory(transparentImage, width: size, height: size));
+  Future<FadeInImage> getAlbumArtwork(int id, double size) async {
+    var c = new Completer<FadeInImage>();
+    c.complete(new FadeInImage.memoryNetwork(
+      placeholder: transparentImage,
+      image: downloadUrl + "artwork/album/$id",
+      width: size,
+      height: size,
+    ));
     return c.future;
   }
 
-  Future<Image> getPlaylistArtwork(int id, double size) async {
-    var c = new Completer<Image>();
-    c.complete(new Image.memory(transparentImage, width: size, height: size));
+  Future<FadeInImage> getPlaylistArtwork(int id, double size) async {
+    var c = new Completer<FadeInImage>();
+    c.complete(new FadeInImage.memoryNetwork(
+      placeholder: transparentImage,
+      image: downloadUrl + "artwork/playlist/$id",
+      width: size,
+      height: size,
+    ));
     return c.future;
   }
 
@@ -191,7 +208,8 @@ class Client {
   Future<String> _login(String username, String password) async {
     print("Client#_login called");
     // TODO: Post request weren't working on the server side
-    final response = await http.get(apiUrl + "login?username=$username&password=$password");
+    final response =
+        await http.get(apiUrl + "login?username=$username&password=$password");
     final responseJson = json.decode(response.body) as Map<String, dynamic>;
     print(responseJson);
     if (responseJson.containsKey("token"))

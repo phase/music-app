@@ -21,6 +21,7 @@ class _MusicAppState extends State<MusicApp> {
   String token;
 
   _MusicAppState() {
+    // todo: don't do this
     client.deleteToken();
     _checkToken();
   }
