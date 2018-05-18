@@ -12,7 +12,6 @@ class EntityRowWidget extends StatelessWidget {
   Widget build(BuildContext context) {
     var children = <Widget>[];
     for (var entity in entities) {
-      if (entity is Song) {}
       children.add(new Container(
         padding: new EdgeInsets.all(4.0),
         child: new Column(

@@ -1,9 +1,13 @@
+import 'package:path_provider/path_provider.dart';
 import 'package:flutter/material.dart';
 import 'package:http/http.dart' as http;
+import 'dart:io';
 import 'dart:async';
 import 'dart:convert' show json;
 import 'dart:typed_data';
 import 'model.dart';
+
+typedef LoginCallback(String /*?*/ token);
 
 // HTTP Client that connects to the REST server
 class Client {
@@ -11,10 +15,68 @@ class Client {
   String apiUrl;
   String downloadUrl;
 
-  Client(this.url) {
+  LoginCallback loginCallback;
+
+  Client(this.url, {this.loginCallback}) {
     this.apiUrl = url + "/api/v1/";
     this.downloadUrl = url + "/download/";
   }
+
+  // token file
+
+  Future<String> get _localPath async {
+    final directory = await getApplicationDocumentsDirectory();
+    return directory.path;
+  }
+
+  Future<File> get _tokenFile async {
+    final path = await _localPath;
+    return new File('$path/MUSIC_CLIENT_TOKEN.txt');
+  }
+
+  Future<FileSystemEntity> deleteToken() async {
+    final file = await _tokenFile;
+    return file.delete();
+  }
+
+  Future<File> writeToken(String token) async {
+    final file = await _tokenFile;
+    return file.writeAsString(token);
+  }
+
+  Future<String> readToken() async {
+    try {
+      final file = await _tokenFile;
+      String token = await file.readAsString();
+      return token;
+    } catch (e) {
+      return null;
+    }
+  }
+
+  // auth
+
+  Future<bool> checkToken() async {
+    final file = await _tokenFile;
+    if (await file.exists()) {
+      final token = await readToken();
+      return await validateToken(token);
+    } else {
+      return false;
+    }
+  }
+
+  Future<bool> login(String username, String password) async {
+    final token = await _login(username, password);
+    if (token != null) {
+      writeToken(token);
+      return true;
+    } else {
+      return false;
+    }
+  }
+
+  // connecting to the server
 
   Future<Song> getSong(int id) async {
     final response = await http.get(apiUrl + "song/" + id.toString());
@@ -118,5 +180,22 @@ class Client {
     var c = new Completer<Image>();
     c.complete(new Image.memory(transparentImage, width: size, height: size));
     return c.future;
+  }
+
+  Future<bool> validateToken(String token) async {
+    final response = await http.get(apiUrl + "validate?token=" + token);
+    final responseJson = json.decode(response.body);
+    return responseJson["valid"];
+  }
+
+  Future<String> _login(String username, String password) async {
+    print("Client#_login called");
+    // TODO: Post request weren't working on the server side
+    final response = await http.get(apiUrl + "login?username=$username&password=$password");
+    final responseJson = json.decode(response.body) as Map<String, dynamic>;
+    print(responseJson);
+    if (responseJson.containsKey("token"))
+      return responseJson["token"] as String;
+    return null;
   }
 }
