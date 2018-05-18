@@ -14,7 +14,7 @@ class Client {
   final String url;
   String apiUrl;
   String downloadUrl;
-
+  String cachedToken;
 
   Client(this.url) {
     this.apiUrl = url + "/api/v1/";
@@ -172,6 +172,7 @@ class Client {
       image: downloadUrl + "artwork/song/$id",
       width: size,
       height: size,
+      fadeInDuration: const Duration(milliseconds: 100),
     ));
     return c.future;
   }
@@ -183,6 +184,7 @@ class Client {
       image: downloadUrl + "artwork/album/$id",
       width: size,
       height: size,
+      fadeInDuration: const Duration(milliseconds: 100),
     ));
     return c.future;
   }
@@ -194,6 +196,7 @@ class Client {
       image: downloadUrl + "artwork/playlist/$id",
       width: size,
       height: size,
+      fadeInDuration: const Duration(milliseconds: 100),
     ));
     return c.future;
   }

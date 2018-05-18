@@ -17,8 +17,8 @@ class MusicApp extends StatefulWidget {
 class _MusicAppState extends State<MusicApp> {
   final Client client = new Client("http://local.jadon.io:2345");
   SongDock currentSongDock;
+  MainApp mainApp;
   LoginPage loginPage;
-  String token;
 
   _MusicAppState() {
     // todo: don't do this
@@ -34,9 +34,10 @@ class _MusicAppState extends State<MusicApp> {
       if (valid) {
         client.readToken().then((String token) {
           print("got token $token");
-          this.token = token;
+          client.cachedToken = token;
           setState(() {
             loginPage = null;
+            mainApp = new MainApp(this);
           });
         }, onError: () {
           setState(() {
@@ -77,49 +78,57 @@ class _MusicAppState extends State<MusicApp> {
         primarySwatch: Colors.orange,
       ),
       home: new Stack(
-        children: <Widget>[
-          new DefaultTabController /* main app */ (
-            length: 4,
-            child: new Scaffold(
-              appBar: new AppBar(
-                title: const Text("Music"),
-                bottom: new TabBar(
-                  tabs: [
-                    new Tab(text: "Home"),
-                    new Tab(text: "Search"),
-                    new Tab(text: "Playlists"),
-                    new Tab(text: "Account"),
-                  ],
-                ),
-              ),
-              body: new TabBarView(
-                children: <Widget>[
-                  new HomePage(client),
-                  new Column(
-                    children: <Widget>[
-                      new Icon(Icons.search),
-                      new Text("404"),
-                    ],
-                  ),
-                  new Column(
-                    children: <Widget>[
-                      new Icon(Icons.library_music),
-                      new Text("404"),
-                    ],
-                  ),
-                  new Column(
-                    children: <Widget>[
-                      new Icon(Icons.account_box),
-                      new Text("404"),
-                    ],
-                  ),
-                ],
-              ),
-              bottomNavigationBar: currentSongDock,
-            ),
+        children: <Widget>[mainApp, loginPage].where((c) => c != null).toList(),
+      ),
+    );
+  }
+}
+
+class MainApp extends StatelessWidget {
+  final _MusicAppState parent;
+
+  MainApp(this.parent);
+
+  @override
+  Widget build(BuildContext context) {
+    return new DefaultTabController /* main app */ (
+      length: 4,
+      child: new Scaffold(
+        appBar: new AppBar(
+          title: const Text("Music"),
+          bottom: new TabBar(
+            tabs: [
+              new Tab(text: "Home"),
+              new Tab(text: "Search"),
+              new Tab(text: "Playlists"),
+              new Tab(text: "Account"),
+            ],
           ),
-          loginPage
-        ].where((c) => c != null).toList(),
+        ),
+        body: new TabBarView(
+          children: <Widget>[
+            new HomePage(parent.client),
+            new Column(
+              children: <Widget>[
+                new Icon(Icons.search),
+                new Text("404"),
+              ],
+            ),
+            new Column(
+              children: <Widget>[
+                new Icon(Icons.library_music),
+                new Text("404"),
+              ],
+            ),
+            new Column(
+              children: <Widget>[
+                new Icon(Icons.account_box),
+                new Text("404"),
+              ],
+            ),
+          ],
+        ),
+        bottomNavigationBar: parent.currentSongDock,
       ),
     );
   }
