@@ -1,9 +1,12 @@
 // should match model.kt in the server
 
+import 'client.dart';
+import 'dart:async';
+
 abstract class DisplayableEntity {
   final String name = "null";
 
-  String getMeta() => "null";
+  Future<String> getMeta(Client client) async {}
 }
 
 abstract class SongList {
@@ -23,13 +26,17 @@ class Song implements DisplayableEntity {
     return new Song.named(
       id: json["id"],
       name: json["name"],
-      artistIds: json["artistIds"],
+      artistIds: (json["artistIds"] as List<dynamic>).cast<int>(),
     );
   }
 
   @override
-  String getMeta() {
-    return artistIds.toString();
+  Future<String> getMeta(Client client) async {
+    var result = <String>[];
+    for (var id in artistIds) {
+      result.add((await client.getArtist(id)).name);
+    }
+    return result.join(", ");
   }
 }
 
@@ -63,14 +70,18 @@ class Album implements DisplayableEntity, SongList {
     return new Album.named(
       id: json["id"],
       name: json["name"],
-      artistIds: json["artistIds"],
-      songIds: json["songIds"],
+      artistIds: (json["artistIds"] as List<dynamic>).cast<int>(),
+      songIds: (json["songIds"] as List<dynamic>).cast<int>(),
     );
   }
 
   @override
-  String getMeta() {
-    return artistIds.toString();
+  Future<String> getMeta(Client client) async {
+    var result = <String>[];
+    for (var id in artistIds) {
+      result.add((await client.getArtist(id)).name);
+    }
+    return result.join(", ");
   }
 }
 
@@ -105,12 +116,13 @@ class Playlist implements DisplayableEntity, SongList {
       id: json["id"],
       name: json["name"],
       userId: json["userId"],
-      songIds: json["songIds"],
+      songIds: (json["songIds"] as List<dynamic>).cast<int>(),
     );
   }
 
   @override
-  String getMeta() {
-    return userId.toString();
+  Future<String> getMeta(Client client) async {
+    final user = await client.getUser(userId);
+    return user.name;
   }
 }

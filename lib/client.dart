@@ -95,6 +95,42 @@ class Client {
     return new Album.fromJson(responseJson);
   }
 
+  Future<DisplayableEntity> getNewEntity(int offset) async {
+    final response = await http
+        .get(apiUrl + "new/" + offset.toString() + "?token=" + cachedToken);
+    final responseJson = json.decode(response.body);
+    switch (responseJson["type"]) {
+      case "Song":
+        return new Song.fromJson(responseJson);
+      case "Album":
+        return new Album.fromJson(responseJson);
+      case "Playlist":
+        return new Playlist.fromJson(responseJson);
+    }
+    return null;
+  }
+
+  Future<DisplayableEntity> getRecentEntity(int offset) async {
+    final response = await http
+        .get(apiUrl + "recent/" + offset.toString() + "?token=" + cachedToken);
+    final responseJson = json.decode(response.body);
+    switch (responseJson["type"]) {
+      case "Song":
+        return new Song.fromJson(responseJson);
+      case "Album":
+        return new Album.fromJson(responseJson);
+      case "Playlist":
+        return new Playlist.fromJson(responseJson);
+    }
+    return null;
+  }
+
+  Future<Map<String, dynamic>> getStats() async {
+    final response = await http.get(apiUrl + "stats/?token=" + cachedToken);
+    final responseJson = json.decode(response.body);
+    return responseJson;
+  }
+
   // Temp
   final Uint8List transparentImage = new Uint8List.fromList(<int>[
     0x89,
@@ -217,5 +253,11 @@ class Client {
     if (responseJson.containsKey("token"))
       return responseJson["token"] as String;
     return null;
+  }
+
+  Future<User> getUser(int id) async {
+    final response = await http.get(apiUrl + "user/$id");
+    final responseJson = json.decode(response.body);
+    return new User.fromJson(responseJson);
   }
 }

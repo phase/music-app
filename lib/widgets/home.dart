@@ -1,12 +1,30 @@
 import 'package:flutter/material.dart';
-import '../model.dart';
 import '../client.dart';
 import 'song_list.dart';
 
-class HomePage extends StatelessWidget {
+class HomePage extends StatefulWidget {
   final Client client;
 
   HomePage(this.client);
+
+  @override
+  _HomePageState createState() => new _HomePageState(this.client);
+}
+
+class _HomePageState extends State<HomePage> {
+  final Client client;
+  Map<String, dynamic> stats;
+
+  _HomePageState(this.client) {
+    this.client.getStats().then((map) {
+      setState(() {
+        print(map);
+        this.stats = map;
+      });
+    }, onError: () {
+      print("Retriving Stats in the _HomePageState constuctor failed!");
+    });
+  }
 
   @override
   Widget build(BuildContext context) {
@@ -20,14 +38,13 @@ class HomePage extends StatelessWidget {
             style: const TextStyle(fontSize: 30.0),
           ),
         ),
-        new EntityRowWidget(client, [
-          Song(1, "Alpha", [1, 2]),
-          Song(2, "Beta", [1]),
-          Song(3, "Gamma", [2]),
-          Song(4, "Delta", [1, 2]),
-          Song(5, "Elipson", [1]),
-          Song(6, "Zeta", [2]),
-        ]),
+        stats == null
+            ? null
+            : new EntityRowWidget(widget.client, stats["recentCount"] as int,
+                (offset) {
+                final entity = widget.client.getRecentEntity(offset);
+                return entity;
+              }),
         new Container(
           padding: new EdgeInsets.fromLTRB(00.0, 0.0, 0.0, 20.0),
           child: const Text(
@@ -35,15 +52,14 @@ class HomePage extends StatelessWidget {
             style: const TextStyle(fontSize: 30.0),
           ),
         ),
-        new EntityRowWidget(client, [
-          Song(7, "Eta", [1, 2]),
-          Song(8, "Theta", [1]),
-          Song(9, "Iota", [2]),
-          Song(10, "Kappa", [1, 2]),
-          Song(11, "Lambda", [1]),
-          Song(12, "Mu", [2]),
-        ]),
-      ],
+        stats == null
+            ? null
+            : new EntityRowWidget(widget.client, stats["newCount"] as int,
+                (offset) {
+                final entity = widget.client.getNewEntity(offset);
+                return entity;
+              }),
+      ].where((c) => c != null).toList(),
     );
   }
 }

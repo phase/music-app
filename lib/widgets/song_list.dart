@@ -1,59 +1,57 @@
+import 'dart:async';
 import 'package:flutter/material.dart';
 import '../model.dart';
 import '../client.dart';
+import 'entity.dart';
 
-class EntityRowWidget extends StatelessWidget {
+typedef Future<DisplayableEntity> EntityProvider(int offset);
+
+class EntityRowWidget extends StatefulWidget {
   final Client client;
-  final List<DisplayableEntity> entities;
+  final int count;
+  final EntityProvider provider;
 
-  EntityRowWidget(this.client, this.entities);
+  EntityRowWidget(this.client, this.count, this.provider);
 
   @override
+  _EntityRowWidgetState createState() => new _EntityRowWidgetState();
+}
+
+class _EntityRowWidgetState extends State<EntityRowWidget> {
+  @override
   Widget build(BuildContext context) {
-    var children = <Widget>[];
-    for (var entity in entities) {
-      children.add(new Container(
-        padding: new EdgeInsets.all(4.0),
-        child: new Column(
-          children: <Widget>[
-            new FutureBuilder<FadeInImage>(
-              future: () {
-                if (entity is Song)
-                  return client.getSongArtwork(entity.id, 150.0);
-                else if (entity is Album)
-                  return client.getAlbumArtwork(entity.id, 150.0);
-                else if (entity is Playlist)
-                  return client.getPlaylistArtwork(entity.id, 150.0);
-                return null;
-              }(),
-              builder: (BuildContext context, AsyncSnapshot<FadeInImage> snapshot) {
-                if (snapshot.hasData) {
-                  var image = snapshot.data;
-                  return image;
-                } else {
-                  return const Placeholder(fallbackHeight: 150.0, fallbackWidth: 150.0,);
-                }
-              },
-            ),
-            new Text(
-              entity.name,
-              overflow: TextOverflow.ellipsis,
-              style: const TextStyle(fontSize: 15.0),
-            ),
-            new Text(
-              entity.getMeta(),
-              overflow: TextOverflow.ellipsis,
-              style: const TextStyle(fontSize: 10.0),
-            )
-          ],
-        ),
-      ));
-    }
     return new Container(
       height: 200.0,
-      child: new ListView(scrollDirection: Axis.horizontal, children: children),
+      child: new ListView.builder(
+        itemCount: widget.count,
+        itemBuilder: (context, index) {
+          return new FutureBuilder<DisplayableEntity>(
+            future: widget.provider(index),
+            builder: (BuildContext context,
+                AsyncSnapshot<DisplayableEntity> snapshot) {
+              if (snapshot != null) {
+                if (snapshot.hasError) {
+                  print(snapshot.error);
+                }
+                if (snapshot.hasData) {
+                  return new EntityWidget(widget.client, snapshot.data);
+                } else {
+                  return const Placeholder(
+                    fallbackHeight: 150.0,
+                    fallbackWidth: 150.0,
+                  );
+                }
+              } else {
+                return const Placeholder(
+                  fallbackHeight: 150.0,
+                  fallbackWidth: 150.0,
+                );
+              }
+            },
+          );
+        },
+        scrollDirection: Axis.horizontal,
+      ),
     );
   }
 }
-
-//class Entity
