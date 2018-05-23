@@ -100,11 +100,11 @@ class Client {
         .get(apiUrl + "new/" + offset.toString() + "?token=" + cachedToken);
     final responseJson = json.decode(response.body);
     switch (responseJson["type"]) {
-      case "Song":
+      case "song":
         return new Song.fromJson(responseJson);
-      case "Album":
+      case "album":
         return new Album.fromJson(responseJson);
-      case "Playlist":
+      case "playlist":
         return new Playlist.fromJson(responseJson);
     }
     return null;
@@ -115,11 +115,11 @@ class Client {
         .get(apiUrl + "recent/" + offset.toString() + "?token=" + cachedToken);
     final responseJson = json.decode(response.body);
     switch (responseJson["type"]) {
-      case "Song":
+      case "song":
         return new Song.fromJson(responseJson);
-      case "Album":
+      case "album":
         return new Album.fromJson(responseJson);
-      case "Playlist":
+      case "playlist":
         return new Playlist.fromJson(responseJson);
     }
     return null;

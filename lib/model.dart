@@ -6,7 +6,9 @@ import 'dart:async';
 abstract class DisplayableEntity {
   final String name = "null";
 
-  Future<String> getMeta(Client client) async {}
+  Future<String> getMeta(Client client) async {
+    return null;
+  }
 }
 
 abstract class SongList {
