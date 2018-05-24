@@ -13,6 +13,8 @@ class BigSongPlayer extends StatefulWidget {
 }
 
 class _BigSongPlayerState extends State<BigSongPlayer> {
+  double duration = 0.0;
+
   @override
   Widget build(BuildContext context) {
     final width = MediaQuery.of(context).size.width;
@@ -35,9 +37,9 @@ class _BigSongPlayerState extends State<BigSongPlayer> {
                   var image = snapshot.data;
                   return image;
                 } else {
-                  return const Placeholder(
-                    fallbackHeight: 300.0,
-                    fallbackWidth: 300.0,
+                  return new Placeholder(
+                    fallbackHeight: width * 0.75,
+                    fallbackWidth: width * 0.75,
                   );
                 }
               },
@@ -67,12 +69,77 @@ class _BigSongPlayerState extends State<BigSongPlayer> {
                     overflow: TextOverflow.ellipsis,
                     style: const TextStyle(
                       fontSize: 20.0,
-                      color: const Color(0x90FFFFFF),
+                      color: Colors.grey,
                     ),
                   );
                 },
               ),
             ),
+            new Container(
+              padding: new EdgeInsets.fromLTRB(0.0, 10.0, 0.0, 0.0),
+              width: width * 0.75,
+              child: new Row(
+                crossAxisAlignment: CrossAxisAlignment.center,
+                mainAxisAlignment: MainAxisAlignment.spaceEvenly,
+                children: <Widget>[
+                  new Text("0:00"),
+                  new Slider(
+                    activeColor: Colors.white,
+                    inactiveColor: Colors.grey[800],
+                    value: this.duration,
+                    onChanged: (double value) {
+                      setState(() {
+                        this.duration = value;
+                      });
+                      print((value).roundToDouble());
+                    },
+                    min: 0.0,
+                    max: 1000.0, // song duration
+                  ),
+                  new Text("9:99"),
+                ],
+              ),
+            ),
+            new Container(
+              padding: new EdgeInsets.fromLTRB(0.0, 10.0, 0.0, 0.0),
+              width: width * 0.8,
+              child: new Row(
+                crossAxisAlignment: CrossAxisAlignment.center,
+                mainAxisAlignment: MainAxisAlignment.spaceEvenly,
+                children: <Widget>[
+                  new IconButton(
+                    icon: new Icon(Icons.skip_previous),
+                    onPressed: () {
+                      print("skip previous button pressed");
+                    },
+                    splashColor: Colors.transparent,
+                    highlightColor: Colors.transparent,
+                  ),
+                  new Container(
+                    child: new IconButton(
+                      icon: new Icon(Icons.play_arrow),
+                      onPressed: () {
+                        print("play button pressed");
+                      },
+                      splashColor: Colors.transparent,
+                      highlightColor: Colors.transparent,
+                    ),
+                    decoration: new BoxDecoration(
+                      borderRadius: new BorderRadius.circular(100.0),
+                      color: Colors.green,
+                    ),
+                  ),
+                  new IconButton(
+                    icon: new Icon(Icons.skip_next),
+                    onPressed: () {
+                      print("skip next button pressed");
+                    },
+                    splashColor: Colors.transparent,
+                    highlightColor: Colors.transparent,
+                  ),
+                ],
+              ),
+            )
           ],
         ),
       ),
