@@ -35,7 +35,11 @@ class Client {
 
   Future<FileSystemEntity> deleteToken() async {
     final file = await _tokenFile;
-    return file.delete();
+    if (file.existsSync()) {
+      return file.delete();
+    } else {
+      return null;
+    }
   }
 
   Future<File> writeToken(String token) async {
